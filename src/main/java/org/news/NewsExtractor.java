@@ -14,13 +14,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NewsExtractor {
-    private static final String NEWS_API_URL = "https://newsapi.org/v2/everything?q=keyword&apiKey=YOUR_API_KEY";
+    private static final String NEWS_API_URL = "https://newsapi.org/v2/everything?q=keyword&apiKey=1b6b2cd9f5764769a8952cf2036556ae";
     private static final String KAFKA_TOPIC = "raw-news";
     private static final String KAFKA_BROKER = "localhost:9092";
 
     public static void main(String[] args) {
         Timer timer = new Timer();
-        timer.schedule(new FetchNewsTask(), 0, 3600000); // Fetch news every hour
+        timer.schedule(new FetchNewsTask(), 0, 3600); // Fetch news every hour
     }
 
     static class FetchNewsTask extends TimerTask {
@@ -60,6 +60,3 @@ public class NewsExtractor {
         }
     }
 }
-
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
