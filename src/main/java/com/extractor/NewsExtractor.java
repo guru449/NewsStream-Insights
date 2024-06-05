@@ -1,5 +1,4 @@
-package org.news;
-
+package com.extractor;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,7 +19,7 @@ public class NewsExtractor {
 
     public static void main(String[] args) {
         Timer timer = new Timer();
-        timer.schedule(new FetchNewsTask(), 0, 3600); // Fetch news every hour
+        timer.schedule(new FetchNewsTask(), 0, 3600000); // Fetch news every hour
     }
 
     static class FetchNewsTask extends TimerTask {

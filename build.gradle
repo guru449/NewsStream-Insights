@@ -7,6 +7,9 @@ plugins {
 group = 'org.example'
 version = '1.0-SNAPSHOT'
 
+apply plugin: 'application'
+mainClassName = 'com.extractor.NewsExtractor'
+
 repositories {
     mavenCentral()
 }
@@ -21,6 +24,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+apply plugin: 'java'
+
+task fatJar(type: Jar) {
+    archiveBaseName = "${project.name}-all"
+    archiveVersion = version
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    duplicatesStrategy = 'exclude' // Set duplicate handling strategy here
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
 }
 
 test {
