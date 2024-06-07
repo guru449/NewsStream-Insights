@@ -11,3 +11,4 @@ WORKDIR /app
 # Copy the built JAR from the build/libs directory
 COPY --from=build /app/build/libs/*.jar app.jar
 CMD ["java", "-jar", "app.jar"]
+

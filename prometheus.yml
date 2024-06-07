@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'java-application'
+    static_configs:
+      - targets: ['java-app:8080']  # Ensure this port matches the one your Java application exposes metrics on
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
