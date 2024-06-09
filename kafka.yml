@@ -1,0 +1,53 @@
+lowercaseOutputName: true
+rules:
+  # Kafka server metrics for bytes in and out, and request metrics
+  - pattern: kafka.server<type=(.+), name=(BytesInPerSec|BytesOutPerSec|BytesRejectedPerSec|FailedFetchRequest|FailedProduceRequest|TotalFetchRequestsPerSec|TotalProduceRequestsPerSec), topic=(.+)><>Count
+    name: kafka_server_$1_$2_total
+    type: COUNTER
+    labels:
+      topic: "$3"
+    help: "Kafka server $1 $2 metrics per topic"
+
+  # More generic server metrics like request and response queues, etc.
+  - pattern: kafka.network<type=(RequestMetrics), name=(RequestsPerSec), request=(.+)><>Count
+    name: kafka_network_request_metrics_total
+    type: COUNTER
+    labels:
+      request_type: "$3"
+    help: "Kafka request metrics total for each request type"
+
+  # JMX exporter's own metrics for Kafka
+  - pattern: kafka.server<type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.+)><>(Count|MeanRate|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+    name: kafka_server_$1_$2
+    type: GAUGE
+    labels:
+      clientId: "$3"
+      topic: "$4"
+      partition: "$5"
+    help: "Kafka server $1 $2 metrics per clientId, topic, and partition"
+
+  # Broker-wide metrics for topics
+  - pattern: kafka.server<type=(BrokerTopicMetrics), name=(.+)><>(Count|OneMinuteRate|FiveMinuteRate|FifteenMinuteRate)
+    name: kafka_broker_topic_metrics_$2
+    type: GAUGE
+    help: "Broker-wide topic metrics for $2"
+
+  # Operating system metrics
+  - pattern: java.lang<type=OperatingSystem><>(ProcessCpuLoad|SystemCpuLoad)
+    name: kafka_operating_system_$1
+    type: GAUGE
+    help: "Operating system metric $1"
+
+  # Garbage collection metrics
+  - pattern: java.lang<type=GarbageCollector, name=(.+)><>(CollectionCount|CollectionTime)
+    name: kafka_gc_$1_$2
+    type: COUNTER
+    labels:
+      gc_name: "$1"
+    help: "Garbage collection $1 $2"
+
+  # JVM memory metrics
+  - pattern: java.lang<type=Memory><HeapMemoryUsage|NonHeapMemoryUsage>(used|committed|max)
+    name: kafka_jvm_memory_$1_$2
+    type: GAUGE
+    help: "JVM memory usage for $1 $2"

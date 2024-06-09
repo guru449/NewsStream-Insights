@@ -24,6 +24,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Micrometer Prometheus for exporting metrics to Prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
 }
 apply plugin: 'java'
 

@@ -12,3 +12,5 @@ WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 CMD ["java", "-jar", "app.jar"]
 
+# After your existing commands in Dockerfile
+USER root
