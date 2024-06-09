@@ -4,8 +4,16 @@ global:
 scrape_configs:
   - job_name: 'java-application'
     static_configs:
-      - targets: ['java-app:8080']  # Ensure this port matches the one your Java application exposes metrics on
+      - targets: ['java-app:8080']
 
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['prometheus:9090']
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka:7071']  # This assumes Kafka is running as a service in Docker. Adjust if it’s external.
+
+  - job_name: 'spring-application'
+    static_configs:
+      - targets: ['java-app:8080']  # Assuming this is the same as 'java-application'
