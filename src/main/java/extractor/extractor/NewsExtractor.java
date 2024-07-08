@@ -4,6 +4,9 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,21 +20,26 @@ import java.util.Properties;
 
 @Component
 public class NewsExtractor {
+    private static final Logger logger = LoggerFactory.getLogger(NewsExtractor.class);
+
     private static final String NEWS_API_URL = "https://newsapi.org/v2/everything?q=keyword&apiKey=1b6b2cd9f5764769a8952cf2036556ae";
     private static final String KAFKA_TOPIC = "raw-news";
-    private static final String KAFKA_BROKER = "localhost:9092";
+
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String kafkaBroker;
+
     private KafkaProducer<String, String> producer;
 
     @PostConstruct
     public void init() {
         Properties props = new Properties();
-        props.put("bootstrap.servers", KAFKA_BROKER);
+        props.put("bootstrap.servers", kafkaBroker);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         this.producer = new KafkaProducer<>(props);
     }
 
-    @Scheduled(fixedRate = 3600000)  // Execute every hour
+    @Scheduled(fixedRate = 36000)  // Execute every hour
     public void fetchNewsAndSendToKafka() {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(NEWS_API_URL).openConnection();
@@ -51,6 +59,7 @@ public class NewsExtractor {
 
             for (int i = 0; i < articles.length(); i++) {
                 JSONObject article = articles.getJSONObject(i);
+                logger.debug("Pushing news to Kafka.");
                 producer.send(new ProducerRecord<>(KAFKA_TOPIC, article.toString()));
             }
         } catch (Exception e) {
