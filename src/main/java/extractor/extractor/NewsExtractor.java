@@ -1,7 +1,9 @@
 package extractor.extractor;
 
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -42,6 +44,8 @@ public class NewsExtractor {
     @Scheduled(fixedRate = 36000)  // Execute every hour
     public void fetchNewsAndSendToKafka() {
         try {
+            logger.error("NewsExtractor.fetchNewsAndSendToKafka");
+
             HttpURLConnection connection = (HttpURLConnection) new URL(NEWS_API_URL).openConnection();
             connection.setRequestMethod("GET");
 
@@ -59,8 +63,18 @@ public class NewsExtractor {
 
             for (int i = 0; i < articles.length(); i++) {
                 JSONObject article = articles.getJSONObject(i);
-                logger.debug("Pushing news to Kafka.");
-                producer.send(new ProducerRecord<>(KAFKA_TOPIC, article.toString()));
+                logger.error("Pushing news to Kafka.");
+                producer.send(new ProducerRecord<>(KAFKA_TOPIC, article.toString()), new Callback() {
+                    @Override
+                    public void onCompletion(RecordMetadata metadata, Exception exception) {
+                        if (exception != null) {
+                            logger.error("Send failed for record {}", article.toString(), exception);
+                        } else {
+                            logger.error("Send succeeded for record {}", article.toString());
+                        }
+                    }
+                });
+
             }
         } catch (Exception e) {
             e.printStackTrace();

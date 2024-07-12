@@ -15,7 +15,7 @@ import java.io.IOException;
 @Service
 public class CSVService {
 
-    private static final int CHUNK_SIZE = 50000;
+    private static final int CHUNK_SIZE = 2000;
 
     @Autowired
     private MongoDatabase mongoDatabase;

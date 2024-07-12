@@ -10,5 +10,6 @@ cub kafka-ready -b $KAFKA_BROKER 1 30
 # Create the Kafka topic
 echo "Creating the 'raw-news' topic..."
 kafka-topics --bootstrap-server $KAFKA_BROKER --topic raw-news --create --partitions 1 --replication-factor 1 --if-not-exists
+kafka-topics --bootstrap-server $KAFKA_BROKER --topic processed-news --create --partitions 1 --replication-factor 1 --if-not-exists
 
 echo "Topic 'raw-news' created."
